@@ -1,3 +1,6 @@
+# bank-card-system
+REST API for bank card management with JWT authentication, role-based access control, AES card encryption, and PostgreSQL — built with Spring Boot 3. 
+
 # Bank Card Management System
 
 A production-ready REST API for managing bank cards, built with Spring Boot 3. Features JWT authentication, role-based access control (ADMIN/USER), AES-encrypted card numbers, fund transfers, filtering with pagination, Liquibase DB migrations, Swagger UI, and Docker Compose for local development.
