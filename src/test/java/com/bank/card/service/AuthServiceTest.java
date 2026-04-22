@@ -181,5 +181,15 @@ class AuthServiceTest {
             assertThatThrownBy(() -> authService.login(loginRequest))
                     .isInstanceOf(BadCredentialsException.class);
         }
+
+        @Test
+        @DisplayName("Should throw BadCredentialsException when user vanishes after auth")
+        void shouldThrowBadCredentialsWhenUserMissingAfterAuth() {
+            when(userRepository.findByUsername("testuser")).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> authService.login(loginRequest))
+                    .isExactlyInstanceOf(BadCredentialsException.class)
+                    .hasMessage("Invalid username or password");
+        }
     }
 }
