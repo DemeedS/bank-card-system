@@ -1,8 +1,10 @@
 package com.bank.card.service.impl;
 
+import com.bank.card.dto.request.UserUpdateRequest;
 import com.bank.card.dto.response.PageResponse;
 import com.bank.card.dto.response.UserResponse;
 import com.bank.card.entity.User;
+import com.bank.card.exception.ConflictException;
 import com.bank.card.exception.ResourceNotFoundException;
 import com.bank.card.mapper.CardMapper;
 import com.bank.card.repository.CardRepository;
@@ -11,6 +13,7 @@ import com.bank.card.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,11 +24,28 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final CardRepository cardRepository;
     private final CardMapper cardMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = true)
     public UserResponse getCurrentUserProfile(User currentUser) {
         return buildUserResponse(currentUser);
+    }
+
+    @Override
+    @Transactional
+    public UserResponse updateCurrentUser(User currentUser, UserUpdateRequest request) {
+        if (request.getEmail() != null && !request.getEmail().equals(currentUser.getEmail())) {
+            if (userRepository.existsByEmail(request.getEmail())) {
+                throw new ConflictException("Email already in use: " + request.getEmail());
+            }
+            currentUser.setEmail(request.getEmail());
+        }
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            currentUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+        User saved = userRepository.save(currentUser);
+        return buildUserResponse(saved);
     }
 
     @Override
