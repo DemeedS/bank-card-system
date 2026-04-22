@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: bank-card-system
+    env: docker
+    plan: free
+    envVars:
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: 5432
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRATION
+        value: 86400000
+      - key: CARD_ENCRYPTION_KEY
+        sync: false
+      - key: SERVER_PORT
+        value: 8080
