@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/changes/002-create-cards-table.yaml
   - include:
       file: db/changelog/changes/003-insert-default-admin.yaml
+  - include:
+      file: db/changelog/changes/004-fix-admin-password.yaml
