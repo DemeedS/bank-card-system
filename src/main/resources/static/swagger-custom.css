@@ -1,0 +1,217 @@
+/* ── Nexus Bank — Custom Swagger Theme ── */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+body { background: #0a1628; font-family: 'Inter', sans-serif; }
+
+/* ── Top bar ── */
+.swagger-ui .topbar {
+  background: linear-gradient(135deg, #0a1628 0%, #112240 100%);
+  border-bottom: 2px solid #c9a84c;
+  padding: 14px 0;
+}
+.swagger-ui .topbar .download-url-wrapper { display: none; }
+.swagger-ui .topbar .topbar-wrapper .link { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.swagger-ui .topbar .topbar-wrapper .link::before {
+  content: "🏦";
+  font-size: 22px;
+}
+.swagger-ui .topbar .topbar-wrapper .link::after {
+  content: "NEXUS BANK · Card Management API";
+  color: #c9a84c;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+.swagger-ui .topbar .topbar-wrapper img { display: none; }
+
+/* ── Main containers ── */
+.swagger-ui, .swagger-ui .wrapper, .swagger-ui .swagger-container { background: #0a1628; }
+
+/* ── Info block ── */
+.swagger-ui .information-container {
+  background: linear-gradient(135deg, #112240 0%, #0e1e38 100%);
+  border-left: 4px solid #c9a84c;
+  border-radius: 10px;
+  padding: 28px 32px;
+  margin-bottom: 20px;
+}
+.swagger-ui .info .title { color: #c9a84c; font-size: 30px; font-weight: 700; letter-spacing: 1px; }
+.swagger-ui .info p,
+.swagger-ui .info li { color: #90aec8; }
+.swagger-ui .info .base-url { color: #6b93b5; }
+.swagger-ui .info .version {
+  background: #c9a84c; color: #0a1628;
+  font-weight: 700; border-radius: 20px; padding: 2px 12px; font-size: 13px;
+}
+
+/* ── Scheme container (Authorize bar) ── */
+.swagger-ui .scheme-container {
+  background: #0e1e38;
+  border: 1px solid #1c3459;
+  border-radius: 8px;
+  padding: 16px 24px;
+  box-shadow: none;
+}
+
+/* ── Authorize button ── */
+.swagger-ui .btn.authorize {
+  background: transparent;
+  border: 2px solid #c9a84c;
+  color: #c9a84c;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+.swagger-ui .btn.authorize svg { fill: #c9a84c; }
+.swagger-ui .btn.authorize:hover { background: #c9a84c; color: #0a1628; }
+
+/* ── Tags (section headers) ── */
+.swagger-ui .opblock-tag {
+  color: #c9a84c;
+  border-bottom: 1px solid #1c3459;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 12px 0;
+}
+.swagger-ui .opblock-tag:hover { background: rgba(201, 168, 76, 0.04); }
+.swagger-ui .opblock-tag small { color: #6b93b5; font-weight: 400; }
+
+/* ── Operation blocks ── */
+.swagger-ui .opblock {
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.35);
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.swagger-ui .opblock .opblock-summary-method {
+  border-radius: 4px;
+  font-weight: 700;
+  min-width: 70px;
+  text-align: center;
+}
+.swagger-ui .opblock.opblock-get    { background: rgba(97,175,254,.06); border-color: #61affe; }
+.swagger-ui .opblock.opblock-get    .opblock-summary-method { background: #61affe; }
+.swagger-ui .opblock.opblock-post   { background: rgba(73,204,144,.06); border-color: #49cc90; }
+.swagger-ui .opblock.opblock-post   .opblock-summary-method { background: #49cc90; }
+.swagger-ui .opblock.opblock-put    { background: rgba(252,161,48,.06); border-color: #fca130; }
+.swagger-ui .opblock.opblock-put    .opblock-summary-method { background: #fca130; }
+.swagger-ui .opblock.opblock-patch  { background: rgba(80,227,194,.06); border-color: #50e3c2; }
+.swagger-ui .opblock.opblock-patch  .opblock-summary-method { background: #50e3c2; color: #0a1628; }
+.swagger-ui .opblock.opblock-delete { background: rgba(249,62,62,.06);  border-color: #f93e3e; }
+.swagger-ui .opblock.opblock-delete .opblock-summary-method { background: #f93e3e; }
+
+.swagger-ui .opblock-summary-path { color: #dce8f3; font-weight: 500; }
+.swagger-ui .opblock-summary-description { color: #6b93b5; }
+.swagger-ui .opblock-body { background: #0a1628; }
+
+/* ── Parameters ── */
+.swagger-ui table.parameters th { color: #c9a84c; border-bottom: 1px solid #1c3459; }
+.swagger-ui .parameter__name { color: #dce8f3; font-weight: 500; }
+.swagger-ui .parameter__type { color: #6b93b5; font-size: 12px; }
+.swagger-ui .parameter__in   { color: #50e3c2; font-size: 11px; }
+.swagger-ui .parameter__deprecated { color: #f93e3e; }
+.swagger-ui table tr td { border-bottom: 1px solid #1c3459; }
+.swagger-ui table thead tr td, .swagger-ui table thead tr th { border-bottom: 1px solid #c9a84c; }
+
+/* ── Inputs ── */
+.swagger-ui input[type=text],
+.swagger-ui input[type=password],
+.swagger-ui input[type=email],
+.swagger-ui textarea,
+.swagger-ui select {
+  background: #112240;
+  border: 1px solid #1c3459;
+  color: #dce8f3;
+  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+}
+.swagger-ui input[type=text]:focus,
+.swagger-ui input[type=password]:focus,
+.swagger-ui textarea:focus {
+  border-color: #c9a84c;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(201,168,76,.2);
+}
+
+/* ── Buttons ── */
+.swagger-ui .btn { border-radius: 6px; font-family: 'Inter', sans-serif; }
+.swagger-ui .btn.execute {
+  background: #c9a84c;
+  border-color: #c9a84c;
+  color: #0a1628;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  transition: background 0.2s;
+}
+.swagger-ui .btn.execute:hover { background: #d4b55a; }
+.swagger-ui .btn-clear { color: #6b93b5; }
+.swagger-ui .btn.cancel { border-color: #f93e3e; color: #f93e3e; }
+
+/* ── Response section ── */
+.swagger-ui .responses-inner h4,
+.swagger-ui .responses-inner h5 { color: #c9a84c; }
+.swagger-ui .response-col_status { color: #dce8f3; font-weight: 600; }
+.swagger-ui .response-col_description__inner p { color: #90aec8; }
+.swagger-ui .responses-table .response-col_status.response-col_status-200 { color: #49cc90; }
+.swagger-ui .responses-table .response-col_status.response-col_status-400 { color: #fca130; }
+.swagger-ui .responses-table .response-col_status.response-col_status-401,
+.swagger-ui .responses-table .response-col_status.response-col_status-403 { color: #f93e3e; }
+
+/* ── Code blocks ── */
+.swagger-ui .highlight-code,
+.swagger-ui .microlight {
+  background: #112240;
+  color: #dce8f3;
+  border-radius: 6px;
+  padding: 14px;
+  font-size: 13px;
+  border: 1px solid #1c3459;
+}
+
+/* ── Models section ── */
+.swagger-ui section.models {
+  border: 1px solid #1c3459;
+  border-radius: 10px;
+  background: #0e1e38;
+}
+.swagger-ui section.models h4 { color: #c9a84c; }
+.swagger-ui section.models h4 span { color: #c9a84c; }
+.swagger-ui .model-title { color: #c9a84c; font-weight: 600; }
+.swagger-ui .model-box { background: #0a1628; border-radius: 6px; }
+.swagger-ui .prop-type { color: #50e3c2; }
+.swagger-ui .prop-format { color: #6b93b5; }
+.swagger-ui table.model tr td { color: #90aec8; border-color: #1c3459; }
+
+/* ── Auth modal ── */
+.swagger-ui .dialog-ux .modal-ux {
+  background: #112240;
+  border: 1px solid #1c3459;
+  border-radius: 12px;
+  box-shadow: 0 24px 64px rgba(0,0,0,.6);
+}
+.swagger-ui .dialog-ux .modal-ux-header {
+  border-bottom: 1px solid #1c3459;
+  background: #0e1e38;
+  border-radius: 12px 12px 0 0;
+}
+.swagger-ui .dialog-ux .modal-ux-header h3 { color: #c9a84c; font-weight: 700; }
+.swagger-ui .dialog-ux .modal-ux-content p { color: #90aec8; }
+.swagger-ui .dialog-ux .modal-ux-content h4 { color: #c9a84c; }
+.swagger-ui .dialog-ux .modal-ux-content .scopes h2 { color: #dce8f3; }
+.swagger-ui .auth-container { background: #0a1628; border-radius: 8px; padding: 16px; }
+
+/* ── Labels / misc text ── */
+.swagger-ui label { color: #90aec8; font-weight: 500; }
+.swagger-ui a { color: #c9a84c; }
+.swagger-ui a:hover { color: #d4b55a; }
+.swagger-ui .markdown p, .swagger-ui .markdown li { color: #90aec8; }
+.swagger-ui .loading-container .loading::after { color: #c9a84c; }
+
+/* ── Scrollbars ── */
+::-webkit-scrollbar { width: 7px; height: 7px; }
+::-webkit-scrollbar-track { background: #0a1628; }
+::-webkit-scrollbar-thumb { background: #1c3459; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #c9a84c; }

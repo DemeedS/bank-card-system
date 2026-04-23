@@ -45,6 +45,7 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
     operationsSorter: method
+    custom-css-url: /swagger-custom.css
 
 logging:
   level:

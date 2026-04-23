@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nexus Bank — Card Management Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #0a1628;
+      --navy2:  #112240;
+      --navy3:  #0e1e38;
+      --border: #1c3459;
+      --gold:   #c9a84c;
+      --gold2:  #d4b55a;
+      --text:   #dce8f3;
+      --muted:  #90aec8;
+      --green:  #49cc90;
+      --blue:   #61affe;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--navy);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
+      border-bottom: 2px solid var(--gold);
+      padding: 0 48px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--gold);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 2px;
+    }
+
+    .logo-sub {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      font-weight: 400;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--gold); }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 80px 48px 60px;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(201,168,76,.12);
+      border: 1px solid rgba(201,168,76,.3);
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--text) 40%, var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 17px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 580px;
+      margin: 0 auto 40px;
+    }
+
+    .cta-group {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: var(--navy);
+      padding: 13px 28px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-primary:hover { background: var(--gold2); transform: translateY(-1px); }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      padding: 13px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      transition: border-color 0.2s, transform 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-1px); }
+
+    /* ── Cards grid ── */
+    .section {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 48px 80px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--navy2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .card:hover { border-color: var(--gold); transform: translateY(-2px); }
+
+    .card-icon {
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+
+    .card h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── Endpoints quick reference ── */
+    .endpoints {
+      background: var(--navy3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .ep-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .ep-row:last-child { border-bottom: none; }
+
+    .method {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 4px;
+      min-width: 56px;
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+    .method.post   { background: #49cc90; color: #0a1628; }
+    .method.get    { background: #61affe; color: #0a1628; }
+    .method.patch  { background: #50e3c2; color: #0a1628; }
+    .method.delete { background: #f93e3e; color: #fff;    }
+
+    .ep-path { color: var(--text); font-family: 'Courier New', monospace; flex: 1; }
+    .ep-desc { color: var(--muted); font-size: 12px; }
+
+    /* ── Status strip ── */
+    .status-strip {
+      max-width: 1000px;
+      margin: 0 auto 60px;
+      padding: 0 48px;
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.5; }
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a class="logo" href="/">
+      <div class="logo-icon">🏦</div>
+      <div>
+        <div class="logo-text">NEXUS BANK</div>
+        <div class="logo-sub">Card Management Platform</div>
+      </div>
+    </a>
+    <nav>
+      <a href="/swagger-ui.html">API Docs →</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="badge">REST API · v1.0.0</div>
+    <h1>Bank Card Management<br />at Your Fingertips</h1>
+    <p>A secure, JWT-authenticated API for managing bank cards, processing transfers, and administering accounts — built with Spring Boot and PostgreSQL.</p>
+    <div class="cta-group">
+      <a class="btn-primary" href="/swagger-ui.html">
+        <span>📖</span> Explore API Docs
+      </a>
+      <a class="btn-outline" href="/v3/api-docs">
+        <span>{ }</span> OpenAPI Spec
+      </a>
+    </div>
+  </section>
+
+  <div class="status-strip">
+    <div class="status-item">
+      <span class="dot"></span>
+      <span>API Online</span>
+    </div>
+    <div class="status-item">🔐 JWT Authentication</div>
+    <div class="status-item">🛡️ AES-128 Card Encryption</div>
+    <div class="status-item">🗄️ PostgreSQL · Neon</div>
+  </div>
+
+  <section class="section">
+    <div class="section-title">Core Capabilities</div>
+    <div class="grid">
+      <div class="card">
+        <div class="card-icon">💳</div>
+        <h3>Card Management</h3>
+        <p>Create, view, block, and delete bank cards. Card numbers are AES-encrypted at rest — only masked values are ever returned.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔄</div>
+        <h3>Secure Transfers</h3>
+        <p>Atomically transfer funds between cards with full balance validation, overdraft protection, and status checks.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔐</div>
+        <h3>JWT Auth</h3>
+        <p>Stateless authentication with 24-hour tokens. Role-based access control separates USER and ADMIN capabilities.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🛠️</div>
+        <h3>Admin Controls</h3>
+        <p>Admin-only endpoints for managing users, blocking cards, and viewing all accounts across the platform.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">Key Endpoints</div>
+    <div class="endpoints">
+      <div class="ep-row">
+        <span class="method post">POST</span>
+        <span class="ep-path">/api/v1/auth/login</span>
+        <span class="ep-desc">Authenticate and get a JWT token</span>
+      </div>
+      <div class="ep-row">
+        <span class="method post">POST</span>
+        <span class="ep-path">/api/v1/auth/register</span>
+        <span class="ep-desc">Register a new user account</span>
+      </div>
+      <div class="ep-row">
+        <span class="method get">GET</span>
+        <span class="ep-path">/api/v1/cards</span>
+        <span class="ep-desc">List your cards (paginated)</span>
+      </div>
+      <div class="ep-row">
+        <span class="method post">POST</span>
+        <span class="ep-path">/api/v1/transfers</span>
+        <span class="ep-desc">Transfer funds between cards</span>
+      </div>
+      <div class="ep-row">
+        <span class="method patch">PATCH</span>
+        <span class="ep-path">/api/v1/admin/cards/{id}/status</span>
+        <span class="ep-desc">Block or activate a card (ADMIN)</span>
+      </div>
+      <div class="ep-row">
+        <span class="method get">GET</span>
+        <span class="ep-path">/api/v1/admin/users</span>
+        <span class="ep-desc">List all users (ADMIN)</span>
+      </div>
+      <div class="ep-row">
+        <span class="method delete">DELETE</span>
+        <span class="ep-path">/api/v1/admin/cards/{id}</span>
+        <span class="ep-desc">Permanently delete a card (ADMIN)</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Nexus Bank · Card Management API · v1.0.0</span>
+    <span>Built with Spring Boot · PostgreSQL · Neon</span>
+  </footer>
+
+</body>
+</html>
