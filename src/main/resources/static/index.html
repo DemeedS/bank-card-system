@@ -1,404 +1,217 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nexus Bank — Card Management Platform</title>
+  <title>Nexus Bank — Card Management API</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy:  { DEFAULT: '#0a1628', 2: '#112240', 3: '#0e1e38' },
+            gold:  { DEFAULT: '#c9a84c', light: '#d4b55a', muted: 'rgba(201,168,76,0.12)' },
+            slate: { api: '#90aec8', dim: '#6b93b5', border: '#1c3459' }
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --navy:   #0a1628;
-      --navy2:  #112240;
-      --navy3:  #0e1e38;
-      --border: #1c3459;
-      --gold:   #c9a84c;
-      --gold2:  #d4b55a;
-      --text:   #dce8f3;
-      --muted:  #90aec8;
-      --green:  #49cc90;
-      --blue:   #61affe;
-    }
-
-    html, body {
-      height: 100%;
-      background: var(--navy);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-    }
-
-    /* ── Header ── */
-    header {
-      background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
-      border-bottom: 2px solid var(--gold);
-      padding: 0 48px;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-    }
-
-    .logo-icon {
-      width: 36px;
-      height: 36px;
-      background: var(--gold);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-    }
-
-    .logo-text {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--gold);
-      letter-spacing: 2px;
-    }
-
-    .logo-sub {
-      font-size: 11px;
-      color: var(--muted);
-      letter-spacing: 1px;
-      font-weight: 400;
-    }
-
-    nav a {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      transition: color 0.2s;
-    }
-    nav a:hover { color: var(--gold); }
-
-    /* ── Hero ── */
-    .hero {
-      padding: 80px 48px 60px;
-      max-width: 900px;
-      margin: 0 auto;
-      text-align: center;
-    }
-
-    .badge {
-      display: inline-block;
-      background: rgba(201,168,76,.12);
-      border: 1px solid rgba(201,168,76,.3);
-      color: var(--gold);
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      padding: 6px 16px;
-      border-radius: 20px;
-      margin-bottom: 24px;
-    }
-
-    .hero h1 {
-      font-size: 48px;
-      font-weight: 700;
-      line-height: 1.15;
-      margin-bottom: 20px;
-      background: linear-gradient(135deg, var(--text) 40%, var(--gold));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .hero p {
-      font-size: 17px;
-      color: var(--muted);
-      line-height: 1.7;
-      max-width: 580px;
-      margin: 0 auto 40px;
-    }
-
-    .cta-group {
-      display: flex;
-      gap: 16px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .btn-primary {
-      background: var(--gold);
-      color: var(--navy);
-      padding: 13px 28px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 15px;
-      text-decoration: none;
-      transition: background 0.2s, transform 0.15s;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .btn-primary:hover { background: var(--gold2); transform: translateY(-1px); }
-
-    .btn-outline {
-      background: transparent;
-      color: var(--text);
-      padding: 13px 28px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 15px;
-      text-decoration: none;
-      border: 1px solid var(--border);
-      transition: border-color 0.2s, transform 0.15s;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-1px); }
-
-    /* ── Cards grid ── */
-    .section {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 0 48px 80px;
-    }
-
-    .section-title {
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 2px;
-      color: var(--gold);
-      text-transform: uppercase;
-      margin-bottom: 24px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-    }
-
-    .card {
-      background: var(--navy2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 28px;
-      transition: border-color 0.2s, transform 0.2s;
-    }
-    .card:hover { border-color: var(--gold); transform: translateY(-2px); }
-
-    .card-icon {
-      font-size: 28px;
-      margin-bottom: 16px;
-    }
-
-    .card h3 {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
-
-    .card p {
-      font-size: 14px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    /* ── Endpoints quick reference ── */
-    .endpoints {
-      background: var(--navy3);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    .ep-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 14px 20px;
-      border-bottom: 1px solid var(--border);
-      font-size: 13px;
-    }
-    .ep-row:last-child { border-bottom: none; }
-
-    .method {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 10px;
-      border-radius: 4px;
-      min-width: 56px;
-      text-align: center;
-      letter-spacing: 0.5px;
-    }
-    .method.post   { background: #49cc90; color: #0a1628; }
-    .method.get    { background: #61affe; color: #0a1628; }
-    .method.patch  { background: #50e3c2; color: #0a1628; }
-    .method.delete { background: #f93e3e; color: #fff;    }
-
-    .ep-path { color: var(--text); font-family: 'Courier New', monospace; flex: 1; }
-    .ep-desc { color: var(--muted); font-size: 12px; }
-
-    /* ── Status strip ── */
-    .status-strip {
-      max-width: 1000px;
-      margin: 0 auto 60px;
-      padding: 0 48px;
-      display: flex;
-      gap: 32px;
-      align-items: center;
-    }
-
-    .status-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 6px var(--green);
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.5; }
-    }
-
-    /* ── Footer ── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 24px 48px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: var(--muted);
-      font-size: 13px;
-    }
+    body { background-color: #0a1628; }
+    .gold-gradient { background: linear-gradient(135deg, #dce8f3 40%, #c9a84c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .card-hover { transition: transform 0.2s, border-color 0.2s; }
+    .card-hover:hover { transform: translateY(-3px); border-color: #c9a84c; }
+    .pulse-dot { animation: pulse 2s cubic-bezier(0.4,0,0.6,1) infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
   </style>
 </head>
-<body>
+<body class="font-sans text-slate-100 antialiased">
 
-  <header>
-    <a class="logo" href="/">
-      <div class="logo-icon">🏦</div>
-      <div>
-        <div class="logo-text">NEXUS BANK</div>
-        <div class="logo-sub">Card Management Platform</div>
+  <!-- ── Nav ── -->
+  <header class="sticky top-0 z-50 border-b border-slate-border bg-navy-2/90 backdrop-blur-sm">
+    <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+      <div class="flex items-center gap-3">
+        <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-gold text-lg">🏦</div>
+        <div>
+          <p class="text-sm font-bold tracking-[0.15em] text-gold">NEXUS BANK</p>
+          <p class="text-[10px] tracking-widest text-slate-dim">CARD MANAGEMENT</p>
+        </div>
       </div>
-    </a>
-    <nav>
-      <a href="/swagger-ui.html">API Docs →</a>
-    </nav>
+      <nav class="flex items-center gap-6 text-sm font-medium text-slate-api">
+        <a href="#features" class="hover:text-gold transition-colors">Features</a>
+        <a href="#endpoints" class="hover:text-gold transition-colors">Endpoints</a>
+        <a href="/swagger-ui.html"
+           class="rounded-lg border border-gold px-4 py-1.5 text-gold hover:bg-gold hover:text-navy transition-all">
+          API Docs →
+        </a>
+      </nav>
+    </div>
   </header>
 
-  <section class="hero">
-    <div class="badge">REST API · v1.0.0</div>
-    <h1>Bank Card Management<br />at Your Fingertips</h1>
-    <p>A secure, JWT-authenticated API for managing bank cards, processing transfers, and administering accounts — built with Spring Boot and PostgreSQL.</p>
-    <div class="cta-group">
-      <a class="btn-primary" href="/swagger-ui.html">
+  <!-- ── Hero ── -->
+  <section class="mx-auto max-w-6xl px-6 pb-20 pt-24 text-center">
+    <span class="mb-6 inline-block rounded-full border border-gold/30 bg-gold/10 px-4 py-1 text-xs font-semibold tracking-widest text-gold">
+      REST API · v1.0.0
+    </span>
+
+    <h1 class="gold-gradient mb-6 text-5xl font-bold leading-tight tracking-tight sm:text-6xl">
+      Bank Card Management<br />at Your Fingertips
+    </h1>
+
+    <p class="mx-auto mb-10 max-w-xl text-lg leading-relaxed text-slate-api">
+      A secure, JWT-authenticated REST API for managing bank cards, processing
+      transfers, and administering accounts — built with Spring Boot and PostgreSQL.
+    </p>
+
+    <div class="flex flex-wrap items-center justify-center gap-4">
+      <a href="/swagger-ui.html"
+         class="inline-flex items-center gap-2 rounded-lg bg-gold px-6 py-3 text-sm font-bold text-navy shadow-lg hover:bg-gold-light transition-all hover:-translate-y-0.5">
         <span>📖</span> Explore API Docs
       </a>
-      <a class="btn-outline" href="/v3/api-docs">
-        <span>{ }</span> OpenAPI Spec
+      <a href="/v3/api-docs"
+         class="inline-flex items-center gap-2 rounded-lg border border-slate-border px-6 py-3 text-sm font-semibold text-slate-100 hover:border-gold hover:text-gold transition-all hover:-translate-y-0.5">
+        <span class="font-mono">{}</span> OpenAPI Spec
       </a>
     </div>
   </section>
 
-  <div class="status-strip">
-    <div class="status-item">
-      <span class="dot"></span>
-      <span>API Online</span>
+  <!-- ── Status bar ── -->
+  <div class="border-y border-slate-border bg-navy-3">
+    <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-10 gap-y-3 px-6 py-4 text-sm text-slate-api">
+      <span class="flex items-center gap-2">
+        <span class="pulse-dot h-2 w-2 rounded-full bg-green-400 shadow-[0_0_6px_#4ade80]"></span>
+        API Online
+      </span>
+      <span>🔐 JWT Authentication</span>
+      <span>🛡️ AES-128 Card Encryption</span>
+      <span>🗄️ PostgreSQL · Neon</span>
+      <span>🚀 Deployed on Render</span>
     </div>
-    <div class="status-item">🔐 JWT Authentication</div>
-    <div class="status-item">🛡️ AES-128 Card Encryption</div>
-    <div class="status-item">🗄️ PostgreSQL · Neon</div>
   </div>
 
-  <section class="section">
-    <div class="section-title">Core Capabilities</div>
-    <div class="grid">
-      <div class="card">
-        <div class="card-icon">💳</div>
-        <h3>Card Management</h3>
-        <p>Create, view, block, and delete bank cards. Card numbers are AES-encrypted at rest — only masked values are ever returned.</p>
+  <!-- ── Features ── -->
+  <section id="features" class="mx-auto max-w-6xl px-6 py-20">
+    <p class="mb-8 text-xs font-semibold uppercase tracking-[0.2em] text-gold">Core Capabilities</p>
+    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+
+      <div class="card-hover rounded-xl border border-slate-border bg-navy-2 p-6">
+        <div class="mb-4 text-3xl">💳</div>
+        <h3 class="mb-2 font-semibold text-slate-100">Card Management</h3>
+        <p class="text-sm leading-relaxed text-slate-api">Create, view, block, and delete bank cards. Card numbers are AES-128 encrypted at rest — only masked values are ever returned.</p>
       </div>
-      <div class="card">
-        <div class="card-icon">🔄</div>
-        <h3>Secure Transfers</h3>
-        <p>Atomically transfer funds between cards with full balance validation, overdraft protection, and status checks.</p>
+
+      <div class="card-hover rounded-xl border border-slate-border bg-navy-2 p-6">
+        <div class="mb-4 text-3xl">🔄</div>
+        <h3 class="mb-2 font-semibold text-slate-100">Secure Transfers</h3>
+        <p class="text-sm leading-relaxed text-slate-api">Atomically transfer funds between cards with overdraft protection, balance validation, and card status checks.</p>
       </div>
-      <div class="card">
-        <div class="card-icon">🔐</div>
-        <h3>JWT Auth</h3>
-        <p>Stateless authentication with 24-hour tokens. Role-based access control separates USER and ADMIN capabilities.</p>
+
+      <div class="card-hover rounded-xl border border-slate-border bg-navy-2 p-6">
+        <div class="mb-4 text-3xl">🔐</div>
+        <h3 class="mb-2 font-semibold text-slate-100">JWT Auth</h3>
+        <p class="text-sm leading-relaxed text-slate-api">Stateless authentication with 24-hour tokens. Role-based access control separates USER and ADMIN capabilities cleanly.</p>
       </div>
-      <div class="card">
-        <div class="card-icon">🛠️</div>
-        <h3>Admin Controls</h3>
-        <p>Admin-only endpoints for managing users, blocking cards, and viewing all accounts across the platform.</p>
+
+      <div class="card-hover rounded-xl border border-slate-border bg-navy-2 p-6">
+        <div class="mb-4 text-3xl">🛠️</div>
+        <h3 class="mb-2 font-semibold text-slate-100">Admin Controls</h3>
+        <p class="text-sm leading-relaxed text-slate-api">Admin-only endpoints for managing users, blocking cards, and viewing all accounts across the platform.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Endpoints ── -->
+  <section id="endpoints" class="mx-auto max-w-6xl px-6 pb-20">
+    <p class="mb-8 text-xs font-semibold uppercase tracking-[0.2em] text-gold">Key Endpoints</p>
+
+    <div class="overflow-hidden rounded-xl border border-slate-border">
+      <!-- header row -->
+      <div class="grid grid-cols-[80px_1fr_1fr] gap-4 border-b border-slate-border bg-navy-3 px-5 py-3 text-[11px] font-semibold uppercase tracking-widest text-slate-dim">
+        <span>Method</span><span>Path</span><span>Description</span>
+      </div>
+
+      <!-- rows -->
+      <div class="divide-y divide-slate-border bg-navy-2">
+
+        <div class="grid grid-cols-[80px_1fr_1fr] items-center gap-4 px-5 py-3.5 text-sm hover:bg-navy-3 transition-colors">
+          <span class="inline-block rounded px-2 py-0.5 text-center text-[11px] font-bold bg-emerald-500 text-navy">POST</span>
+          <code class="text-slate-100">/api/v1/auth/login</code>
+          <span class="text-slate-api">Authenticate and receive a JWT token</span>
+        </div>
+
+        <div class="grid grid-cols-[80px_1fr_1fr] items-center gap-4 px-5 py-3.5 text-sm hover:bg-navy-3 transition-colors">
+          <span class="inline-block rounded px-2 py-0.5 text-center text-[11px] font-bold bg-emerald-500 text-navy">POST</span>
+          <code class="text-slate-100">/api/v1/auth/register</code>
+          <span class="text-slate-api">Register a new user account</span>
+        </div>
+
+        <div class="grid grid-cols-[80px_1fr_1fr] items-center gap-4 px-5 py-3.5 text-sm hover:bg-navy-3 transition-colors">
+          <span class="inline-block rounded px-2 py-0.5 text-center text-[11px] font-bold bg-blue-400 text-navy">GET</span>
+          <code class="text-slate-100">/api/v1/cards</code>
+          <span class="text-slate-api">List your cards (paginated)</span>
+        </div>
+
+        <div class="grid grid-cols-[80px_1fr_1fr] items-center gap-4 px-5 py-3.5 text-sm hover:bg-navy-3 transition-colors">
+          <span class="inline-block rounded px-2 py-0.5 text-center text-[11px] font-bold bg-emerald-500 text-navy">POST</span>
+          <code class="text-slate-100">/api/v1/transfers</code>
+          <span class="text-slate-api">Transfer funds between cards</span>
+        </div>
+
+        <div class="grid grid-cols-[80px_1fr_1fr] items-center gap-4 px-5 py-3.5 text-sm hover:bg-navy-3 transition-colors">
+          <span class="inline-block rounded px-2 py-0.5 text-center text-[11px] font-bold bg-teal-400 text-navy">PATCH</span>
+          <code class="text-slate-100">/api/v1/admin/cards/{id}/status</code>
+          <span class="text-slate-api">Block or activate a card <span class="ml-1 rounded bg-gold/10 px-1.5 py-0.5 text-[10px] font-semibold text-gold">ADMIN</span></span>
+        </div>
+
+        <div class="grid grid-cols-[80px_1fr_1fr] items-center gap-4 px-5 py-3.5 text-sm hover:bg-navy-3 transition-colors">
+          <span class="inline-block rounded px-2 py-0.5 text-center text-[11px] font-bold bg-blue-400 text-navy">GET</span>
+          <code class="text-slate-100">/api/v1/admin/users</code>
+          <span class="text-slate-api">List all users <span class="ml-1 rounded bg-gold/10 px-1.5 py-0.5 text-[10px] font-semibold text-gold">ADMIN</span></span>
+        </div>
+
+        <div class="grid grid-cols-[80px_1fr_1fr] items-center gap-4 px-5 py-3.5 text-sm hover:bg-navy-3 transition-colors">
+          <span class="inline-block rounded px-2 py-0.5 text-center text-[11px] font-bold bg-red-500 text-white">DELETE</span>
+          <code class="text-slate-100">/api/v1/admin/cards/{id}</code>
+          <span class="text-slate-api">Permanently delete a card <span class="ml-1 rounded bg-gold/10 px-1.5 py-0.5 text-[10px] font-semibold text-gold">ADMIN</span></span>
+        </div>
+
+      </div>
+    </div>
+
+    <p class="mt-4 text-center text-sm text-slate-dim">
+      Full interactive documentation available at
+      <a href="/swagger-ui.html" class="text-gold hover:underline">/swagger-ui.html</a>
+    </p>
+  </section>
+
+  <!-- ── Tech stack ── -->
+  <section class="border-t border-slate-border bg-navy-3">
+    <div class="mx-auto max-w-6xl px-6 py-12">
+      <p class="mb-8 text-center text-xs font-semibold uppercase tracking-[0.2em] text-gold">Built With</p>
+      <div class="flex flex-wrap justify-center gap-4 text-sm text-slate-api">
+        <span class="rounded-lg border border-slate-border bg-navy-2 px-4 py-2">☕ Java 21</span>
+        <span class="rounded-lg border border-slate-border bg-navy-2 px-4 py-2">🌱 Spring Boot 3</span>
+        <span class="rounded-lg border border-slate-border bg-navy-2 px-4 py-2">🔐 Spring Security + JWT</span>
+        <span class="rounded-lg border border-slate-border bg-navy-2 px-4 py-2">🗄️ PostgreSQL + Liquibase</span>
+        <span class="rounded-lg border border-slate-border bg-navy-2 px-4 py-2">🐳 Docker</span>
+        <span class="rounded-lg border border-slate-border bg-navy-2 px-4 py-2">🚀 Render + Neon</span>
+        <span class="rounded-lg border border-slate-border bg-navy-2 px-4 py-2">📋 Swagger / OpenAPI 3</span>
       </div>
     </div>
   </section>
 
-  <section class="section">
-    <div class="section-title">Key Endpoints</div>
-    <div class="endpoints">
-      <div class="ep-row">
-        <span class="method post">POST</span>
-        <span class="ep-path">/api/v1/auth/login</span>
-        <span class="ep-desc">Authenticate and get a JWT token</span>
-      </div>
-      <div class="ep-row">
-        <span class="method post">POST</span>
-        <span class="ep-path">/api/v1/auth/register</span>
-        <span class="ep-desc">Register a new user account</span>
-      </div>
-      <div class="ep-row">
-        <span class="method get">GET</span>
-        <span class="ep-path">/api/v1/cards</span>
-        <span class="ep-desc">List your cards (paginated)</span>
-      </div>
-      <div class="ep-row">
-        <span class="method post">POST</span>
-        <span class="ep-path">/api/v1/transfers</span>
-        <span class="ep-desc">Transfer funds between cards</span>
-      </div>
-      <div class="ep-row">
-        <span class="method patch">PATCH</span>
-        <span class="ep-path">/api/v1/admin/cards/{id}/status</span>
-        <span class="ep-desc">Block or activate a card (ADMIN)</span>
-      </div>
-      <div class="ep-row">
-        <span class="method get">GET</span>
-        <span class="ep-path">/api/v1/admin/users</span>
-        <span class="ep-desc">List all users (ADMIN)</span>
-      </div>
-      <div class="ep-row">
-        <span class="method delete">DELETE</span>
-        <span class="ep-path">/api/v1/admin/cards/{id}</span>
-        <span class="ep-desc">Permanently delete a card (ADMIN)</span>
-      </div>
+  <!-- ── Footer ── -->
+  <footer class="border-t border-slate-border">
+    <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-5 text-xs text-slate-dim">
+      <span>Nexus Bank · Card Management API · v1.0.0</span>
+      <a href="/swagger-ui.html" class="hover:text-gold transition-colors">API Documentation →</a>
     </div>
-  </section>
-
-  <footer>
-    <span>Nexus Bank · Card Management API · v1.0.0</span>
-    <span>Built with Spring Boot · PostgreSQL · Neon</span>
   </footer>
 
 </body>
