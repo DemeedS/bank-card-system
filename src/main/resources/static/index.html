@@ -1,218 +1,636 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nexus Bank — Card Management API</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            navy:  { DEFAULT: '#0a1628', 2: '#112240', 3: '#0e1e38' },
-            gold:  { DEFAULT: '#c9a84c', light: '#d4b55a', muted: 'rgba(201,168,76,0.12)' },
-            slate: { api: '#90aec8', dim: '#6b93b5', border: '#1c3459' }
-          },
-          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
-        }
-      }
-    }
-  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
   <style>
-    body { background-color: #0a1628; }
-    .gold-gradient { background: linear-gradient(135deg, #dce8f3 40%, #c9a84c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .card-hover { transition: transform 0.2s, border-color 0.2s; }
-    .card-hover:hover { transform: translateY(-3px); border-color: #c9a84c; }
-    .pulse-dot { animation: pulse 2s cubic-bezier(0.4,0,0.6,1) infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:     #05090f;
+      --bg2:    #090f1a;
+      --line:   rgba(255,255,255,0.07);
+      --gold:   #c9a84c;
+      --gold2:  rgba(201,168,76,0.08);
+      --white:  #f0f4f8;
+      --muted:  #5a7394;
+      --dim:    #2a3f58;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Inter', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── Orb ── */
+    .orb {
+      position: fixed;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 800px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 65%);
+      filter: blur(60px);
+      pointer-events: none;
+      z-index: 0;
+      animation: orbPulse 6s ease-in-out infinite;
+    }
+    @keyframes orbPulse { 0%,100%{opacity:.6;transform:translateX(-50%) scale(1)} 50%{opacity:1;transform:translateX(-50%) scale(1.12)} }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 60px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(5,9,15,0.85);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .nav-logo-mark {
+      width: 28px;
+      height: 28px;
+      border: 1.5px solid var(--gold);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .nav-logo-name {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+
+    .nav-cta {
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 20px;
+      border-radius: 6px;
+      background: var(--gold);
+      color: var(--bg);
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 24px 60px;
+    }
+
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .hero-eyebrow::before,
+    .hero-eyebrow::after {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 1px;
+      background: var(--gold);
+      opacity: 0.4;
+    }
+
+    .hero-title {
+      font-size: clamp(52px, 9vw, 100px);
+      font-weight: 700;
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+
+    .hero-title-line {
+      display: block;
+    }
+
+    .hero-title-line.accent { color: var(--gold); }
+
+    .hero-sub {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 460px;
+      line-height: 1.7;
+      margin-bottom: 48px;
+      font-weight: 400;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-gold {
+      padding: 13px 28px;
+      background: var(--gold);
+      color: var(--bg);
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .btn-gold:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    .btn-ghost {
+      padding: 13px 28px;
+      border: 1px solid var(--dim);
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-1px); }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--dim);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .scroll-hint-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--dim), transparent);
+      animation: scrollLine 1.8s ease-in-out infinite;
+    }
+    @keyframes scrollLine { 0%,100%{transform:scaleY(1);opacity:.5} 50%{transform:scaleY(0.6);opacity:1} }
+
+    /* ── Stats strip ── */
+    .stats {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 20px 48px;
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .stat-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4ade80;
+      box-shadow: 0 0 8px #4ade80;
+      animation: orbPulse 2s ease-in-out infinite;
+    }
+
+    /* ── Sections ── */
+    .section {
+      position: relative;
+      z-index: 1;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 120px 48px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: clamp(30px, 4vw, 48px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 56px;
+      color: var(--white);
+    }
+
+    .section-title span { color: var(--gold); }
+
+    .section-divider {
+      width: 100%;
+      height: 1px;
+      background: var(--line);
+      margin-bottom: 56px;
+    }
+
+    /* ── Feature cards ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .feature-card {
+      background: var(--bg2);
+      padding: 36px 32px;
+      transition: background 0.3s;
+    }
+    .feature-card:hover { background: rgba(201,168,76,0.04); }
+
+    .feature-icon {
+      font-size: 26px;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .feature-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+
+    .feature-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ── Endpoints ── */
+    .endpoints-table {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .ep-header {
+      display: grid;
+      grid-template-columns: 72px 1fr 1fr;
+      gap: 16px;
+      padding: 12px 24px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid var(--line);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    .ep-row {
+      display: grid;
+      grid-template-columns: 72px 1fr 1fr;
+      gap: 16px;
+      align-items: center;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+    .ep-row:last-child { border-bottom: none; }
+    .ep-row:hover { background: rgba(255,255,255,0.02); }
+
+    .method {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      padding: 4px 8px;
+      border-radius: 4px;
+      text-align: center;
+    }
+    .method.get    { background: rgba(97,175,254,.15); color: #61affe; border: 1px solid rgba(97,175,254,.3); }
+    .method.post   { background: rgba(73,204,144,.15); color: #49cc90; border: 1px solid rgba(73,204,144,.3); }
+    .method.patch  { background: rgba(80,227,194,.15); color: #50e3c2; border: 1px solid rgba(80,227,194,.3); }
+    .method.delete { background: rgba(249,62,62,.15);  color: #f93e3e; border: 1px solid rgba(249,62,62,.3); }
+
+    .ep-path { font-family: 'SF Mono', 'Fira Code', monospace; color: var(--white); font-size: 12px; }
+    .ep-desc { color: var(--muted); }
+    .badge-admin {
+      display: inline-block;
+      margin-left: 8px;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: var(--gold2);
+      color: var(--gold);
+      border: 1px solid rgba(201,168,76,0.2);
+      vertical-align: middle;
+    }
+
+    /* ── Stack ── */
+    .stack-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .stack-pill {
+      font-size: 13px;
+      color: var(--muted);
+      padding: 10px 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--bg2);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .stack-pill:hover { border-color: var(--gold); color: var(--white); }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--line);
+      padding: 28px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    footer span { font-size: 12px; color: var(--dim); }
+    footer a { font-size: 12px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    footer a:hover { color: var(--gold); }
   </style>
 </head>
-<body class="font-sans text-slate-100 antialiased">
+<body>
+
+  <div class="orb"></div>
 
   <!-- ── Nav ── -->
-  <header class="sticky top-0 z-50 border-b border-slate-border bg-navy-2/90 backdrop-blur-sm">
-    <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-      <div class="flex items-center gap-3">
-        <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-gold text-lg">🏦</div>
-        <div>
-          <p class="text-sm font-bold tracking-[0.15em] text-gold">NEXUS BANK</p>
-          <p class="text-[10px] tracking-widest text-slate-dim">CARD MANAGEMENT</p>
-        </div>
-      </div>
-      <nav class="flex items-center gap-6 text-sm font-medium text-slate-api">
-        <a href="#features" class="hover:text-gold transition-colors">Features</a>
-        <a href="#endpoints" class="hover:text-gold transition-colors">Endpoints</a>
-        <a href="/swagger-ui.html"
-           class="rounded-lg border border-gold px-4 py-1.5 text-gold hover:bg-gold hover:text-navy transition-all">
-          API Docs →
-        </a>
-      </nav>
-    </div>
-  </header>
+  <nav id="nav">
+    <a class="nav-logo" href="/">
+      <div class="nav-logo-mark">🏦</div>
+      <span class="nav-logo-name">NEXUS BANK</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#endpoints">Endpoints</a></li>
+      <li><a href="#stack">Stack</a></li>
+      <li><a class="nav-cta" href="/swagger-ui.html">API Docs</a></li>
+    </ul>
+  </nav>
 
   <!-- ── Hero ── -->
-  <section class="mx-auto max-w-6xl px-6 pb-20 pt-24 text-center">
-    <span class="mb-6 inline-block rounded-full border border-gold/30 bg-gold/10 px-4 py-1 text-xs font-semibold tracking-widest text-gold">
-      REST API · v1.0.0
-    </span>
-
-    <h1 class="gold-gradient mb-6 text-5xl font-bold leading-tight tracking-tight sm:text-6xl">
-      Bank Card Management<br />at Your Fingertips
+  <section class="hero">
+    <p class="hero-eyebrow" id="hero-eyebrow">REST API · v1.0.0</p>
+    <h1 class="hero-title">
+      <span class="hero-title-line" id="hero-line1">Card Management</span>
+      <span class="hero-title-line accent" id="hero-line2">Built Different.</span>
     </h1>
-
-    <p class="mx-auto mb-10 max-w-xl text-lg leading-relaxed text-slate-api">
-      A secure, JWT-authenticated REST API for managing bank cards, processing
-      transfers, and administering accounts — built with Spring Boot and PostgreSQL.
+    <p class="hero-sub" id="hero-sub">
+      A production-ready banking API with JWT authentication, AES-128 card encryption,
+      atomic fund transfers, and role-based access control.
     </p>
-
-    <div class="flex flex-wrap items-center justify-center gap-4">
-      <a href="/swagger-ui.html"
-         class="inline-flex items-center gap-2 rounded-lg bg-gold px-6 py-3 text-sm font-bold text-navy shadow-lg hover:bg-gold-light transition-all hover:-translate-y-0.5">
-        <span>📖</span> Explore API Docs
-      </a>
-      <a href="/v3/api-docs"
-         class="inline-flex items-center gap-2 rounded-lg border border-slate-border px-6 py-3 text-sm font-semibold text-slate-100 hover:border-gold hover:text-gold transition-all hover:-translate-y-0.5">
-        <span class="font-mono">{}</span> OpenAPI Spec
-      </a>
+    <div class="hero-actions" id="hero-actions">
+      <a class="btn-gold" href="/swagger-ui.html">Explore API Docs</a>
+      <a class="btn-ghost" href="/v3/api-docs">{ } OpenAPI Spec</a>
+    </div>
+    <div class="scroll-hint" id="scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-hint-line"></div>
     </div>
   </section>
 
-  <!-- ── Status bar ── -->
-  <div class="border-y border-slate-border bg-navy-3">
-    <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-10 gap-y-3 px-6 py-4 text-sm text-slate-api">
-      <span class="flex items-center gap-2">
-        <span class="pulse-dot h-2 w-2 rounded-full bg-green-400 shadow-[0_0_6px_#4ade80]"></span>
-        API Online
-      </span>
-      <span>🔐 JWT Authentication</span>
-      <span>🛡️ AES-128 Card Encryption</span>
-      <span>🗄️ PostgreSQL · Neon</span>
-      <span>🚀 Deployed on Render</span>
-    </div>
+  <!-- ── Stats ── -->
+  <div class="stats">
+    <div class="stat"><span class="stat-dot"></span> Live on Render</div>
+    <div class="stat">🔐 JWT Auth</div>
+    <div class="stat">🛡️ AES-128 Encrypted</div>
+    <div class="stat">🗄️ PostgreSQL · Neon</div>
+    <div class="stat">⚡ Spring Boot 3</div>
   </div>
 
   <!-- ── Features ── -->
-  <section id="features" class="mx-auto max-w-6xl px-6 py-20">
-    <p class="mb-8 text-xs font-semibold uppercase tracking-[0.2em] text-gold">Core Capabilities</p>
-    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-
-      <div class="card-hover rounded-xl border border-slate-border bg-navy-2 p-6">
-        <div class="mb-4 text-3xl">💳</div>
-        <h3 class="mb-2 font-semibold text-slate-100">Card Management</h3>
-        <p class="text-sm leading-relaxed text-slate-api">Create, view, block, and delete bank cards. Card numbers are AES-128 encrypted at rest — only masked values are ever returned.</p>
+  <section class="section" id="features">
+    <p class="section-label reveal">01 / Capabilities</p>
+    <h2 class="section-title reveal">Everything a banking<br />API <span>should be.</span></h2>
+    <div class="section-divider reveal"></div>
+    <div class="features-grid reveal-stagger">
+      <div class="feature-card">
+        <span class="feature-icon">💳</span>
+        <h3 class="feature-title">Card Management</h3>
+        <p class="feature-desc">Create, view, block, and delete bank cards. Card numbers are AES-128 encrypted — only masked values are ever returned.</p>
       </div>
-
-      <div class="card-hover rounded-xl border border-slate-border bg-navy-2 p-6">
-        <div class="mb-4 text-3xl">🔄</div>
-        <h3 class="mb-2 font-semibold text-slate-100">Secure Transfers</h3>
-        <p class="text-sm leading-relaxed text-slate-api">Atomically transfer funds between cards with overdraft protection, balance validation, and card status checks.</p>
+      <div class="feature-card">
+        <span class="feature-icon">🔄</span>
+        <h3 class="feature-title">Atomic Transfers</h3>
+        <p class="feature-desc">Transfer funds between cards with full overdraft protection, balance checks, and card status validation — all in a single transaction.</p>
       </div>
-
-      <div class="card-hover rounded-xl border border-slate-border bg-navy-2 p-6">
-        <div class="mb-4 text-3xl">🔐</div>
-        <h3 class="mb-2 font-semibold text-slate-100">JWT Auth</h3>
-        <p class="text-sm leading-relaxed text-slate-api">Stateless authentication with 24-hour tokens. Role-based access control separates USER and ADMIN capabilities cleanly.</p>
+      <div class="feature-card">
+        <span class="feature-icon">🔐</span>
+        <h3 class="feature-title">JWT Auth</h3>
+        <p class="feature-desc">Stateless 24-hour tokens. Role-based access control separates USER and ADMIN capabilities at every layer.</p>
       </div>
-
-      <div class="card-hover rounded-xl border border-slate-border bg-navy-2 p-6">
-        <div class="mb-4 text-3xl">🛠️</div>
-        <h3 class="mb-2 font-semibold text-slate-100">Admin Controls</h3>
-        <p class="text-sm leading-relaxed text-slate-api">Admin-only endpoints for managing users, blocking cards, and viewing all accounts across the platform.</p>
+      <div class="feature-card">
+        <span class="feature-icon">🛠️</span>
+        <h3 class="feature-title">Admin Controls</h3>
+        <p class="feature-desc">Full admin surface for managing users, toggling card status, and auditing all accounts across the platform.</p>
       </div>
-
     </div>
   </section>
 
   <!-- ── Endpoints ── -->
-  <section id="endpoints" class="mx-auto max-w-6xl px-6 pb-20">
-    <p class="mb-8 text-xs font-semibold uppercase tracking-[0.2em] text-gold">Key Endpoints</p>
-
-    <div class="overflow-hidden rounded-xl border border-slate-border">
-      <!-- header row -->
-      <div class="grid grid-cols-[80px_1fr_1fr] gap-4 border-b border-slate-border bg-navy-3 px-5 py-3 text-[11px] font-semibold uppercase tracking-widest text-slate-dim">
+  <section class="section" id="endpoints">
+    <p class="section-label reveal">02 / Endpoints</p>
+    <h2 class="section-title reveal">Clean, predictable<br /><span>REST design.</span></h2>
+    <div class="section-divider reveal"></div>
+    <div class="endpoints-table">
+      <div class="ep-header">
         <span>Method</span><span>Path</span><span>Description</span>
       </div>
-
-      <!-- rows -->
-      <div class="divide-y divide-slate-border bg-navy-2">
-
-        <div class="grid grid-cols-[80px_1fr_1fr] items-center gap-4 px-5 py-3.5 text-sm hover:bg-navy-3 transition-colors">
-          <span class="inline-block rounded px-2 py-0.5 text-center text-[11px] font-bold bg-emerald-500 text-navy">POST</span>
-          <code class="text-slate-100">/api/v1/auth/login</code>
-          <span class="text-slate-api">Authenticate and receive a JWT token</span>
-        </div>
-
-        <div class="grid grid-cols-[80px_1fr_1fr] items-center gap-4 px-5 py-3.5 text-sm hover:bg-navy-3 transition-colors">
-          <span class="inline-block rounded px-2 py-0.5 text-center text-[11px] font-bold bg-emerald-500 text-navy">POST</span>
-          <code class="text-slate-100">/api/v1/auth/register</code>
-          <span class="text-slate-api">Register a new user account</span>
-        </div>
-
-        <div class="grid grid-cols-[80px_1fr_1fr] items-center gap-4 px-5 py-3.5 text-sm hover:bg-navy-3 transition-colors">
-          <span class="inline-block rounded px-2 py-0.5 text-center text-[11px] font-bold bg-blue-400 text-navy">GET</span>
-          <code class="text-slate-100">/api/v1/cards</code>
-          <span class="text-slate-api">List your cards (paginated)</span>
-        </div>
-
-        <div class="grid grid-cols-[80px_1fr_1fr] items-center gap-4 px-5 py-3.5 text-sm hover:bg-navy-3 transition-colors">
-          <span class="inline-block rounded px-2 py-0.5 text-center text-[11px] font-bold bg-emerald-500 text-navy">POST</span>
-          <code class="text-slate-100">/api/v1/transfers</code>
-          <span class="text-slate-api">Transfer funds between cards</span>
-        </div>
-
-        <div class="grid grid-cols-[80px_1fr_1fr] items-center gap-4 px-5 py-3.5 text-sm hover:bg-navy-3 transition-colors">
-          <span class="inline-block rounded px-2 py-0.5 text-center text-[11px] font-bold bg-teal-400 text-navy">PATCH</span>
-          <code class="text-slate-100">/api/v1/admin/cards/{id}/status</code>
-          <span class="text-slate-api">Block or activate a card <span class="ml-1 rounded bg-gold/10 px-1.5 py-0.5 text-[10px] font-semibold text-gold">ADMIN</span></span>
-        </div>
-
-        <div class="grid grid-cols-[80px_1fr_1fr] items-center gap-4 px-5 py-3.5 text-sm hover:bg-navy-3 transition-colors">
-          <span class="inline-block rounded px-2 py-0.5 text-center text-[11px] font-bold bg-blue-400 text-navy">GET</span>
-          <code class="text-slate-100">/api/v1/admin/users</code>
-          <span class="text-slate-api">List all users <span class="ml-1 rounded bg-gold/10 px-1.5 py-0.5 text-[10px] font-semibold text-gold">ADMIN</span></span>
-        </div>
-
-        <div class="grid grid-cols-[80px_1fr_1fr] items-center gap-4 px-5 py-3.5 text-sm hover:bg-navy-3 transition-colors">
-          <span class="inline-block rounded px-2 py-0.5 text-center text-[11px] font-bold bg-red-500 text-white">DELETE</span>
-          <code class="text-slate-100">/api/v1/admin/cards/{id}</code>
-          <span class="text-slate-api">Permanently delete a card <span class="ml-1 rounded bg-gold/10 px-1.5 py-0.5 text-[10px] font-semibold text-gold">ADMIN</span></span>
-        </div>
-
+      <div class="ep-row reveal">
+        <span class="method post">POST</span>
+        <code class="ep-path">/api/v1/auth/login</code>
+        <span class="ep-desc">Authenticate and receive a JWT token</span>
+      </div>
+      <div class="ep-row reveal">
+        <span class="method post">POST</span>
+        <code class="ep-path">/api/v1/auth/register</code>
+        <span class="ep-desc">Register a new user account</span>
+      </div>
+      <div class="ep-row reveal">
+        <span class="method get">GET</span>
+        <code class="ep-path">/api/v1/cards</code>
+        <span class="ep-desc">List your cards — filterable, paginated</span>
+      </div>
+      <div class="ep-row reveal">
+        <span class="method post">POST</span>
+        <code class="ep-path">/api/v1/transfers</code>
+        <span class="ep-desc">Transfer funds between your cards</span>
+      </div>
+      <div class="ep-row reveal">
+        <span class="method patch">PATCH</span>
+        <code class="ep-path">/api/v1/admin/cards/{id}/status</code>
+        <span class="ep-desc">Set card status <span class="badge-admin">ADMIN</span></span>
+      </div>
+      <div class="ep-row reveal">
+        <span class="method get">GET</span>
+        <code class="ep-path">/api/v1/admin/users</code>
+        <span class="ep-desc">List all users <span class="badge-admin">ADMIN</span></span>
+      </div>
+      <div class="ep-row reveal">
+        <span class="method delete">DELETE</span>
+        <code class="ep-path">/api/v1/admin/cards/{id}</code>
+        <span class="ep-desc">Delete a card permanently <span class="badge-admin">ADMIN</span></span>
       </div>
     </div>
-
-    <p class="mt-4 text-center text-sm text-slate-dim">
-      Full interactive documentation available at
-      <a href="/swagger-ui.html" class="text-gold hover:underline">/swagger-ui.html</a>
+    <p style="margin-top:20px;font-size:13px;color:var(--muted);text-align:center;">
+      Full interactive docs at <a href="/swagger-ui.html" style="color:var(--gold);text-decoration:none;">/swagger-ui.html</a>
     </p>
   </section>
 
-  <!-- ── Tech stack ── -->
-  <section class="border-t border-slate-border bg-navy-3">
-    <div class="mx-auto max-w-6xl px-6 py-12">
-      <p class="mb-8 text-center text-xs font-semibold uppercase tracking-[0.2em] text-gold">Built With</p>
-      <div class="flex flex-wrap justify-center gap-4 text-sm text-slate-api">
-        <span class="rounded-lg border border-slate-border bg-navy-2 px-4 py-2">☕ Java 21</span>
-        <span class="rounded-lg border border-slate-border bg-navy-2 px-4 py-2">🌱 Spring Boot 3</span>
-        <span class="rounded-lg border border-slate-border bg-navy-2 px-4 py-2">🔐 Spring Security + JWT</span>
-        <span class="rounded-lg border border-slate-border bg-navy-2 px-4 py-2">🗄️ PostgreSQL + Liquibase</span>
-        <span class="rounded-lg border border-slate-border bg-navy-2 px-4 py-2">🐳 Docker</span>
-        <span class="rounded-lg border border-slate-border bg-navy-2 px-4 py-2">🚀 Render + Neon</span>
-        <span class="rounded-lg border border-slate-border bg-navy-2 px-4 py-2">📋 Swagger / OpenAPI 3</span>
-      </div>
+  <!-- ── Stack ── -->
+  <section class="section" id="stack">
+    <p class="section-label reveal">03 / Stack</p>
+    <h2 class="section-title reveal">Production-grade<br /><span>technology choices.</span></h2>
+    <div class="section-divider reveal"></div>
+    <div class="stack-grid reveal-stagger">
+      <span class="stack-pill">☕ Java 21</span>
+      <span class="stack-pill">🌱 Spring Boot 3</span>
+      <span class="stack-pill">🔐 Spring Security + JWT</span>
+      <span class="stack-pill">🗄️ PostgreSQL</span>
+      <span class="stack-pill">💧 Liquibase</span>
+      <span class="stack-pill">🔁 MapStruct</span>
+      <span class="stack-pill">🐳 Docker</span>
+      <span class="stack-pill">🚀 Render</span>
+      <span class="stack-pill">☁️ Neon</span>
+      <span class="stack-pill">📋 OpenAPI 3 / Swagger</span>
+      <span class="stack-pill">🧪 JUnit 5 + Mockito</span>
+      <span class="stack-pill">⚙️ GitHub Actions CI</span>
     </div>
   </section>
 
   <!-- ── Footer ── -->
-  <footer class="border-t border-slate-border">
-    <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-5 text-xs text-slate-dim">
-      <span>Nexus Bank · Card Management API · v1.0.0</span>
-      <a href="/swagger-ui.html" class="hover:text-gold transition-colors">API Documentation →</a>
-    </div>
+  <footer>
+    <span>Nexus Bank · Card Management API · v1.0.0</span>
+    <a href="/swagger-ui.html">API Documentation →</a>
   </footer>
 
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ── Nav fade in ──
+    gsap.from('#nav', { y: -20, opacity: 0, duration: 0.6, ease: 'power2.out' });
+
+    // ── Hero sequence ──
+    const hero = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    hero
+      .from('#hero-eyebrow',  { y: 24, opacity: 0, duration: 0.7 }, 0.3)
+      .from('#hero-line1',    { y: 60, opacity: 0, duration: 0.8 }, 0.5)
+      .from('#hero-line2',    { y: 60, opacity: 0, duration: 0.8 }, 0.65)
+      .from('#hero-sub',      { y: 24, opacity: 0, duration: 0.7 }, 0.9)
+      .from('#hero-actions',  { y: 20, opacity: 0, duration: 0.6 }, 1.05)
+      .from('#scroll-hint',   { opacity: 0, duration: 0.8 }, 1.4);
+
+    // ── Scroll reveals ──
+    gsap.utils.toArray('.reveal').forEach(el => {
+      gsap.from(el, {
+        scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' },
+        y: 36,
+        opacity: 0,
+        duration: 0.7,
+        ease: 'power2.out'
+      });
+    });
+
+    // ── Stagger reveals ──
+    gsap.utils.toArray('.reveal-stagger').forEach(container => {
+      gsap.from(container.children, {
+        scrollTrigger: { trigger: container, start: 'top 82%', toggleActions: 'play none none none' },
+        y: 48,
+        opacity: 0,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: 'power2.out'
+      });
+    });
+
+    // ── Nav background on scroll ──
+    ScrollTrigger.create({
+      start: 'top -60',
+      onUpdate: self => {
+        const nav = document.getElementById('nav');
+        nav.style.borderBottomColor = self.progress > 0
+          ? 'rgba(255,255,255,0.07)' : 'transparent';
+      }
+    });
+  </script>
 </body>
 </html>
