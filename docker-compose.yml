@@ -5,15 +5,15 @@ services:
     image: postgres:16-alpine
     container_name: bank-postgres
     environment:
-      POSTGRES_DB: bankdb
-      POSTGRES_USER: bankuser
-      POSTGRES_PASSWORD: bankpassword
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U bankuser -d bankdb"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -31,12 +31,12 @@ services:
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_NAME: bankdb
-      DB_USER: bankuser
-      DB_PASSWORD: bankpassword
-      JWT_SECRET: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
-      JWT_EXPIRATION: 86400000
-      CARD_ENCRYPTION_KEY: MySecretCardKey1
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
+      CARD_ENCRYPTION_KEY: ${CARD_ENCRYPTION_KEY}
       SERVER_PORT: 8080
     ports:
       - "8080:8080"

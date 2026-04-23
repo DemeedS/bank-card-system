@@ -14,6 +14,9 @@ target/
 # Maven
 .mvn/wrapper/maven-wrapper.jar
 
+# Environment / secrets
+.env
+
 # OS
 .DS_Store
 Thumbs.db

@@ -3,9 +3,9 @@ spring:
     name: bank-card-management
 
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:bankdb}?sslmode=require
-    username: ${DB_USER:bankuser}
-    password: ${DB_PASSWORD:bankpassword}
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=require
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
       max-lifetime: 250000
@@ -32,12 +32,12 @@ server:
     include-message: always
 
 jwt:
-  secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
-  expiration: ${JWT_EXPIRATION:86400000}  # 24 hours in ms
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION:86400000}
 
 card:
   encryption:
-    secret-key: ${CARD_ENCRYPTION_KEY:MySecretCardKey1}  # 16 chars for AES-128
+    secret-key: ${CARD_ENCRYPTION_KEY}
 
 springdoc:
   api-docs:

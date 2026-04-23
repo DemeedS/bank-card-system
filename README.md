@@ -55,6 +55,7 @@ A production-ready REST API for managing bank cards — built with Spring Boot 3
 ```bash
 git clone https://github.com/DemeedS/bank-card-system.git
 cd bank-card-system
+cp .env.example .env      # fill in your values
 docker-compose up --build
 ```
 
@@ -70,13 +71,14 @@ export DB_HOST=localhost
 export DB_PORT=5432
 export DB_NAME=bankdb
 export DB_USER=bankuser
-export DB_PASSWORD=your_password
-export JWT_SECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+export DB_PASSWORD=<your_db_password>
+export JWT_SECRET=<64-char-hex-string>
 export JWT_EXPIRATION=86400000
-export CARD_ENCRYPTION_KEY=MySecretCardKey1
+export CARD_ENCRYPTION_KEY=<exactly-16-chars>
 ```
 
-> `CARD_ENCRYPTION_KEY` must be exactly 16 characters (AES-128).
+> `JWT_SECRET` — generate a secure 64-character hex string (e.g. `openssl rand -hex 32`).  
+> `CARD_ENCRYPTION_KEY` — must be exactly 16 characters (AES-128).
 
 3. Build and run:
 
