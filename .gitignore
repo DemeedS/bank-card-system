@@ -21,3 +21,4 @@ Thumbs.db
 # Claude Code internal files
 CLAUDE.md
 .claudeignore
+.claude/
