@@ -32,16 +32,17 @@ public class TransferServiceImpl implements TransferService {
             throw new CardOperationException("Source and destination cards must be different");
         }
 
-        // 2. Load both cards — both must belong to the current user
-        Card fromCard = cardRepository.findByIdAndOwnerId(request.getFromCardId(), currentUser.getId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Source card not found with id: " + request.getFromCardId()
-                ));
+        // 2. Load both cards with pessimistic locks acquired in sorted ID order to prevent deadlocks
+        Long firstId  = Math.min(request.getFromCardId(), request.getToCardId());
+        Long secondId = Math.max(request.getFromCardId(), request.getToCardId());
 
-        Card toCard = cardRepository.findByIdAndOwnerId(request.getToCardId(), currentUser.getId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Destination card not found with id: " + request.getToCardId()
-                ));
+        Card firstCard = cardRepository.findByIdAndOwnerIdForUpdate(firstId, currentUser.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Card not found with id: " + firstId));
+        Card secondCard = cardRepository.findByIdAndOwnerIdForUpdate(secondId, currentUser.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Card not found with id: " + secondId));
+
+        Card fromCard = firstId.equals(request.getFromCardId()) ? firstCard : secondCard;
+        Card toCard   = firstId.equals(request.getToCardId())   ? firstCard : secondCard;
 
         // 3. Validate source card is ACTIVE
         if (fromCard.getStatus() != CardStatus.ACTIVE) {

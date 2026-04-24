@@ -115,7 +115,7 @@ public class CardServiceImpl implements CardService {
     // ─── User Operations ─────────────────────────────────────────────────────
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public PageResponse<CardResponse> getMyCards(User currentUser, CardStatus statusFilter, Pageable pageable) {
         // Auto-expire cards whose expiry date has passed
         Page<Card> page;
@@ -132,7 +132,7 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public CardResponse getMyCard(Long cardId, User currentUser) {
         Card card = cardRepository.findByIdAndOwnerId(cardId, currentUser.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(

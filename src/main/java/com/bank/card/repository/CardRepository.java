@@ -2,10 +2,12 @@ package com.bank.card.repository;
 
 import com.bank.card.entity.Card;
 import com.bank.card.entity.CardStatus;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -21,6 +23,10 @@ public interface CardRepository extends JpaRepository<Card, Long>, JpaSpecificat
 
     @Query("SELECT c FROM Card c WHERE c.owner.id = :ownerId AND c.id = :cardId")
     Optional<Card> findByIdAndOwnerId(@Param("cardId") Long cardId, @Param("ownerId") Long ownerId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT c FROM Card c WHERE c.owner.id = :ownerId AND c.id = :cardId")
+    Optional<Card> findByIdAndOwnerIdForUpdate(@Param("cardId") Long cardId, @Param("ownerId") Long ownerId);
 
     boolean existsByIdAndOwnerId(Long id, Long ownerId);
 

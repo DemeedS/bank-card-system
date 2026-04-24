@@ -82,8 +82,8 @@ class TransferServiceTest {
         @Test
         @DisplayName("Should transfer funds and update both balances correctly")
         void shouldTransferSuccessfully() {
-            when(cardRepository.findByIdAndOwnerId(1L, 1L)).thenReturn(Optional.of(fromCard));
-            when(cardRepository.findByIdAndOwnerId(2L, 1L)).thenReturn(Optional.of(toCard));
+            when(cardRepository.findByIdAndOwnerIdForUpdate(1L, 1L)).thenReturn(Optional.of(fromCard));
+            when(cardRepository.findByIdAndOwnerIdForUpdate(2L, 1L)).thenReturn(Optional.of(toCard));
             when(cardRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
             TransferResponse response = transferService.transfer(validRequest, testUser);
@@ -102,8 +102,8 @@ class TransferServiceTest {
         @DisplayName("Should allow exact balance transfer (zero remaining)")
         void shouldAllowExactBalanceTransfer() {
             validRequest.setAmount(new BigDecimal("1000.00"));
-            when(cardRepository.findByIdAndOwnerId(1L, 1L)).thenReturn(Optional.of(fromCard));
-            when(cardRepository.findByIdAndOwnerId(2L, 1L)).thenReturn(Optional.of(toCard));
+            when(cardRepository.findByIdAndOwnerIdForUpdate(1L, 1L)).thenReturn(Optional.of(fromCard));
+            when(cardRepository.findByIdAndOwnerIdForUpdate(2L, 1L)).thenReturn(Optional.of(toCard));
             when(cardRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
             TransferResponse response = transferService.transfer(validRequest, testUser);
@@ -125,15 +125,15 @@ class TransferServiceTest {
                     .isInstanceOf(CardOperationException.class)
                     .hasMessageContaining("different");
 
-            verify(cardRepository, never()).findByIdAndOwnerId(any(), any());
+            verify(cardRepository, never()).findByIdAndOwnerIdForUpdate(any(), any());
         }
 
         @Test
         @DisplayName("Should throw InsufficientFundsException when balance too low")
         void shouldThrowOnInsufficientFunds() {
             validRequest.setAmount(new BigDecimal("9999.00"));
-            when(cardRepository.findByIdAndOwnerId(1L, 1L)).thenReturn(Optional.of(fromCard));
-            when(cardRepository.findByIdAndOwnerId(2L, 1L)).thenReturn(Optional.of(toCard));
+            when(cardRepository.findByIdAndOwnerIdForUpdate(1L, 1L)).thenReturn(Optional.of(fromCard));
+            when(cardRepository.findByIdAndOwnerIdForUpdate(2L, 1L)).thenReturn(Optional.of(toCard));
 
             assertThatThrownBy(() -> transferService.transfer(validRequest, testUser))
                     .isInstanceOf(InsufficientFundsException.class)
@@ -146,8 +146,8 @@ class TransferServiceTest {
         @DisplayName("Should throw CardOperationException when source card is BLOCKED")
         void shouldThrowWhenSourceCardBlocked() {
             fromCard.setStatus(CardStatus.BLOCKED);
-            when(cardRepository.findByIdAndOwnerId(1L, 1L)).thenReturn(Optional.of(fromCard));
-            when(cardRepository.findByIdAndOwnerId(2L, 1L)).thenReturn(Optional.of(toCard));
+            when(cardRepository.findByIdAndOwnerIdForUpdate(1L, 1L)).thenReturn(Optional.of(fromCard));
+            when(cardRepository.findByIdAndOwnerIdForUpdate(2L, 1L)).thenReturn(Optional.of(toCard));
 
             assertThatThrownBy(() -> transferService.transfer(validRequest, testUser))
                     .isInstanceOf(CardOperationException.class)
@@ -158,8 +158,8 @@ class TransferServiceTest {
         @DisplayName("Should throw CardOperationException when destination card is BLOCKED")
         void shouldThrowWhenDestinationCardBlocked() {
             toCard.setStatus(CardStatus.BLOCKED);
-            when(cardRepository.findByIdAndOwnerId(1L, 1L)).thenReturn(Optional.of(fromCard));
-            when(cardRepository.findByIdAndOwnerId(2L, 1L)).thenReturn(Optional.of(toCard));
+            when(cardRepository.findByIdAndOwnerIdForUpdate(1L, 1L)).thenReturn(Optional.of(fromCard));
+            when(cardRepository.findByIdAndOwnerIdForUpdate(2L, 1L)).thenReturn(Optional.of(toCard));
 
             assertThatThrownBy(() -> transferService.transfer(validRequest, testUser))
                     .isInstanceOf(CardOperationException.class)
@@ -169,11 +169,11 @@ class TransferServiceTest {
         @Test
         @DisplayName("Should throw ResourceNotFoundException when card does not belong to user")
         void shouldThrowWhenCardNotOwned() {
-            when(cardRepository.findByIdAndOwnerId(1L, 1L)).thenReturn(Optional.empty());
+            when(cardRepository.findByIdAndOwnerIdForUpdate(1L, 1L)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> transferService.transfer(validRequest, testUser))
                     .isInstanceOf(ResourceNotFoundException.class)
-                    .hasMessageContaining("Source card");
+                    .hasMessageContaining("not found");
         }
     }
 }
